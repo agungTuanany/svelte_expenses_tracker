@@ -1,0 +1,21 @@
+# Logs
+ logs
+
+ # Dependency directories
+node_modules/
+public/build/
+
+.DS_Store
+
+# dotenv environment variables file
+.env
+.env.test
+.env.json
+
+# vim syntastic
+syntastic.log
+
+# temporary
+~*/
+note.md
+notes.md
