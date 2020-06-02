@@ -31,6 +31,8 @@
         .filter (transaction => transaction.value < 0)
         .reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
 
+    // Showing the latest transaction first.
+    $: sortedTransactions = transactions.sort ((a, b) => b.date - a.date)
     // ###############################################
     onMount (async () => {
         try {
@@ -91,20 +93,20 @@
     </div>
 
     <!-- Balance columns -->
-    <SummaryCard mode="balance"  value={balance}/>
+    <SummaryCard mode="balance" value={balance}/>
 
     <!-- Income and Expenses columns -->
     <div class="columns">
         <div class="column">
-            <SummaryCard mode="income"  value={income}/>
+            <SummaryCard mode="income" value={income}/>
         </div>
         <div class="column">
-            <SummaryCard mode="expenses"  value={expenses}/>
+            <SummaryCard mode="expenses" value={expenses}/>
         </div>
     </div>
     <hr>
 
-    {#each transactions as transaction (transaction._id)}
+    {#each sortedTransactions as transaction (transaction._id)}
         <Transactions  transaction={transaction} removeTransaction={removeTransaction}/>
      {/each}
 </div>

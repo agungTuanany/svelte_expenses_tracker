@@ -1,3 +1,6 @@
+<!--
+    Svelte component: every single columns
+-->
 <script>
     // ## Props variables ##
     export let value = 0
