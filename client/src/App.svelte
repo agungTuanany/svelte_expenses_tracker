@@ -1,7 +1,26 @@
-<script charset="utf-8">
+<script>
+    // Dependencies
+    import axios from "axios"
+    import { onMount } from "svelte"
+
+
+    // ###############################################
     // Declared variable
     let input = 0
     let typeOfTransaction = "+"
+    let transactions = []
+
+    // ###############################################
+    onMount (async () => {
+        try {
+            const { data } = await axios.get ("api/transactions")
+            console.log ("data transaction", data)
+            transactions = data
+        }
+        catch (err) {
+            console.log ("onMount error: ", err)
+        }
+    })
 </script>
 
 <style type="text/css" media="all">
@@ -32,4 +51,5 @@
     </div>
     <p>{input}</p>
     <h1>{typeOfTransaction}</h1>
+    {JSON.stringify (transactions)}
 </div>
