@@ -6,12 +6,14 @@
     // ## Build in dependencies
     import Transactions from "./components/Transactions.svelte"
     import SummaryCard  from "./components/SummaryCard.svelte"
+    import Loading      from "./components/Loading.svelte"
 
     // ###############################################
     // Declared variable
     let input = 0
     let typeOfTransaction = "+"
     let transactions = []
+    let loading =false
 
 
     // ## Reactive assignment | statement ##
@@ -36,11 +38,14 @@
     // ###############################################
     onMount (async () => {
         try {
+            loading = true
             const { data } = await axios.get ("/api/transactions")
-            console.log ("data transaction", data)
+            // console.log ("data transaction", data)
             transactions = data
+            loading = false
         }
         catch (err) {
+            loading = false
             console.log ("onMount error: ", err)
         }
     })
@@ -91,22 +96,32 @@
             </button>
         </p>
     </div>
+    {#if loading}
+    <Loading />
+    {/if}
 
-    <!-- Balance columns -->
-    <SummaryCard mode="balance" value={balance}/>
+    {#if transactions.length > 0}
+        <!-- Balance columns -->
+        <SummaryCard mode="balance" value={balance}/>
 
-    <!-- Income and Expenses columns -->
-    <div class="columns">
-        <div class="column">
-            <SummaryCard mode="income" value={income}/>
+        <!-- Income and Expenses columns -->
+        <div class="columns">
+            <div class="column">
+                <SummaryCard mode="income" value={income}/>
+            </div>
+            <div class="column">
+                <SummaryCard mode="expenses" value={expenses}/>
+            </div>
         </div>
-        <div class="column">
-            <SummaryCard mode="expenses" value={expenses}/>
+        <hr>
+    {:else}
+        <div class="notification">
+            add Your first transaction
         </div>
-    </div>
-    <hr>
+    {/if}
+
 
     {#each sortedTransactions as transaction (transaction._id)}
         <Transactions  transaction={transaction} removeTransaction={removeTransaction}/>
-     {/each}
+    {/each}
 </div>
