@@ -17,6 +17,9 @@
     //$: disabled = input === 0 | input === undefined
     $: disabled = !input
 
+    // Sum of value on every transaction
+    $: balance = transactions.reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
+
     // ###############################################
     onMount (async () => {
         try {
@@ -74,6 +77,9 @@
                 Save
             </button>
         </p>
+    </div>
+    <div class="notification is-info is-light has-text-centered">
+        Balance: <strong>{balance}</strong>
     </div>
     <hr>
     {#each transactions as transaction (transaction._id)}
