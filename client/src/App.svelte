@@ -10,6 +10,13 @@
     let typeOfTransaction = "+"
     let transactions = []
 
+
+    // ## Reactive assignment | statement ##
+    // Every time input changes "$: disabled" will be updated
+    // If user put a value 0  or If user not put a value or blank the button should disabled
+    //$: disabled = input === 0 | input === undefined
+    $: disabled = !input
+
     // ###############################################
     onMount (async () => {
         try {
@@ -63,14 +70,14 @@
             <input class="input" type="number" bind:value={input} placeholder="Amount of money">
         </p>
         <p class="control">
-            <button class="button" on:click={addTransaction}>
+            <button class="button" on:click={addTransaction} disabled={disabled}>
                 Save
             </button>
         </p>
     </div>
     <hr>
     {#each transactions as transaction (transaction._id)}
-        <div class="notification">
+        <div class="notification is-light {transaction.value > 0 ? "is-success" : "is-danger"}" >
             {transaction.value}
             <button class="delete" on:click={() => removeTransaction (transaction._id)}></button>
         </div>
