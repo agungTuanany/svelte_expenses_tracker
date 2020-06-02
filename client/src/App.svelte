@@ -20,6 +20,14 @@
     // Sum of value on every transaction
     $: balance = transactions.reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
 
+    $: income = transactions
+        .filter (transaction => transaction.value > 0)
+        .reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
+
+    $: expenses = transactions
+        .filter (transaction => transaction.value < 0)
+        .reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
+
     // ###############################################
     onMount (async () => {
         try {
@@ -78,10 +86,27 @@
             </button>
         </p>
     </div>
+
+    <!-- Balance columns -->
     <div class="notification is-info is-light has-text-centered">
         Balance: <strong>{balance}</strong>
     </div>
+
+    <!-- Income and Expenses columns -->
+    <div class="columns">
+        <div class="column">
+            <div class="notification is-success is-light has-text-centered">
+                Income: <strong>{income}</strong>
+            </div>
+        </div>
+        <div class="column">
+            <div class="notification is-danger is-light has-text-centered">
+                Expenses: <strong>{expenses}</strong>
+            </div>
+        </div>
+    </div>
     <hr>
+
     {#each transactions as transaction (transaction._id)}
         <div class="notification is-light {transaction.value > 0 ? "is-success" : "is-danger"}" >
             {transaction.value}
