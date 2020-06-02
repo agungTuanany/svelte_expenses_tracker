@@ -10,6 +10,7 @@ const mongoose      = require ("mongoose")
 const cors          = require ("cors")          // Allow to access API from the browser
 const bodyParser    = require ("body-parser")
 const morgan        = require ("morgan")        // Check all HTTP request and log in apps
+const path          = require ("path")
 
 // Buildin dependencies
 const config        = require ("./lib/config")
@@ -44,9 +45,14 @@ mongoose.connect (config.mongoURI, {
 app.use ("/api/transactions", transactionRoutes)
 
 // ##################################
-// Express router
-app.get ("/", (req, res) => res.send ("hello world"))
-
+// Express router server static files
+if (process.env.NODE_ENV === "production") {
+    console.log ("production state")
+    app.use (express.static ("client/public"))
+    app.use ("*", (req, res) => {
+        res.sendFile (path.resolve (__dirname, "client", "public", "index.html"))
+    })
+}
 
 // ##################################
 // Express init
