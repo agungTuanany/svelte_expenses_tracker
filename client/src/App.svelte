@@ -7,7 +7,7 @@
     import Transactions from "./components/Transactions.svelte"
     import SummaryCard  from "./components/SummaryCard.svelte"
     import Loading      from "./components/Loading.svelte"
-    import { transactions } from "./stores/transactionStore.js"
+    import { transactions, sortedTransactions, balance, income, expenses  } from "./stores/transactionStore.js"
 
     // ###############################################
     // Declared variable
@@ -23,19 +23,6 @@
     //$: disabled = input === 0 | input === undefined
     $: disabled = !input
 
-    // Sum of value on every transaction
-    $: balance = $transactions.reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
-
-    $: income = $transactions
-        .filter (transaction => transaction.value > 0)
-        .reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
-
-    $: expenses = $transactions
-        .filter (transaction => transaction.value < 0)
-        .reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
-
-    // Showing the latest transaction first.
-    $: sortedTransactions = $transactions.sort ((a, b) => b.date - a.date)
     // ###############################################
     onMount (async () => {
         try {
@@ -58,7 +45,7 @@
         }
 
         const response = await axios.post ("/api/transactions", transaction)
-        $transactions = [response.data, ...transactions]
+        $transactions = [response.data, ...$transactions]
         input = 0
     }
 
@@ -104,15 +91,15 @@
 
     {#if $transactions.length > 0}
         <!-- Balance columns -->
-        <SummaryCard mode="balance" value={balance}/>
+        <SummaryCard mode="balance" value={$balance}/>
 
         <!-- Income and Expenses columns -->
         <div class="columns">
             <div class="column">
-                <SummaryCard mode="income" value={income}/>
+                <SummaryCard mode="income" value={$income}/>
             </div>
             <div class="column">
-                <SummaryCard mode="expenses" value={expenses}/>
+                <SummaryCard mode="expenses" value={$expenses}/>
             </div>
         </div>
         <hr>
@@ -123,7 +110,7 @@
     {/if}
 
 
-    {#each sortedTransactions as transaction (transaction._id)}
+    {#each $sortedTransactions as transaction (transaction._id)}
         <Transactions  transaction={transaction} removeTransaction={removeTransaction}/>
     {/each}
 </div>
