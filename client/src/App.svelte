@@ -69,7 +69,7 @@
         </p>
     </div>
     <hr>
-    {#each transactions as transaction}
+    {#each transactions as transaction (transaction._id)}
         <div class="notification">
             {transaction.value}
             <button class="delete" on:click={() => removeTransaction (transaction._id)}></button>
