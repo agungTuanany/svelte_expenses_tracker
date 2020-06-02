@@ -1,8 +1,11 @@
 <script>
     // Dependencies
-    import axios from "axios"
-    import { onMount } from "svelte"
+    import axios        from "axios"
+    import { onMount }  from "svelte"
 
+    // ## Build in dependencies
+    import Transactions from "./components/Transactions.svelte"
+    import SummaryCard  from "./components/SummaryCard.svelte"
 
     // ###############################################
     // Declared variable
@@ -88,29 +91,20 @@
     </div>
 
     <!-- Balance columns -->
-    <div class="notification is-info is-light has-text-centered">
-        Balance: <strong>{balance}</strong>
-    </div>
+    <SummaryCard mode="balance"  value={balance}/>
 
     <!-- Income and Expenses columns -->
     <div class="columns">
         <div class="column">
-            <div class="notification is-success is-light has-text-centered">
-                Income: <strong>{income}</strong>
-            </div>
+            <SummaryCard mode="income"  value={income}/>
         </div>
         <div class="column">
-            <div class="notification is-danger is-light has-text-centered">
-                Expenses: <strong>{expenses}</strong>
-            </div>
+            <SummaryCard mode="expenses"  value={expenses}/>
         </div>
     </div>
     <hr>
 
     {#each transactions as transaction (transaction._id)}
-        <div class="notification is-light {transaction.value > 0 ? "is-success" : "is-danger"}" >
-            {transaction.value}
-            <button class="delete" on:click={() => removeTransaction (transaction._id)}></button>
-        </div>
-    {/each}
+        <Transactions  transaction={transaction} removeTransaction={removeTransaction}/>
+     {/each}
 </div>
