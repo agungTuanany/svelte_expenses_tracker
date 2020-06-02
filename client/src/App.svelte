@@ -32,6 +32,14 @@
         transactions = [response.data, ...transactions]
         input = 0
     }
+
+    async function removeTransaction (id) {
+        const response = await axios.delete ("/api/transactions/" + id)
+
+        if (response.data.id === id) {
+            transactions = transactions.filter (t => t._id !== id)
+        }
+    }
 </script>
 
 <style type="text/css" media="all">
@@ -64,6 +72,7 @@
     {#each transactions as transaction}
         <div class="notification">
             {transaction.value}
+            <button class="delete" on:click={() => removeTransaction (transaction._id)}></button>
         </div>
     {/each}
 </div>
