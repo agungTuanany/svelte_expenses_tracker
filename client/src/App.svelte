@@ -13,7 +13,7 @@
     // ###############################################
     onMount (async () => {
         try {
-            const { data } = await axios.get ("api/transactions")
+            const { data } = await axios.get ("/api/transactions")
             console.log ("data transaction", data)
             transactions = data
         }
@@ -21,6 +21,17 @@
             console.log ("onMount error: ", err)
         }
     })
+
+    async function addTransaction () {
+        const transaction = {
+            date    : new Date ().getTime (),
+            value   : typeOfTransaction === "+" ? input : input * - 1
+        }
+
+        const response = await axios.post ("/api/transactions", transaction)
+        transactions = [response.data, ...transactions]
+        input = 0
+    }
 </script>
 
 <style type="text/css" media="all">
@@ -44,12 +55,15 @@
             <input class="input" type="number" bind:value={input} placeholder="Amount of money">
         </p>
         <p class="control">
-            <button class="button">
+            <button class="button" on:click={addTransaction}>
                 Save
             </button>
         </p>
     </div>
-    <p>{input}</p>
-    <h1>{typeOfTransaction}</h1>
-    {JSON.stringify (transactions)}
+    <hr>
+    {#each transactions as transaction}
+        <div class="notification">
+            {transaction.value}
+        </div>
+    {/each}
 </div>
