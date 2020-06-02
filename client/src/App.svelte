@@ -7,12 +7,13 @@
     import Transactions from "./components/Transactions.svelte"
     import SummaryCard  from "./components/SummaryCard.svelte"
     import Loading      from "./components/Loading.svelte"
+    import { transactions } from "./stores/transactionStore.js"
 
     // ###############################################
     // Declared variable
     let input = 0
     let typeOfTransaction = "+"
-    let transactions = []
+    //let transactions = []
     let loading =false
 
 
@@ -23,25 +24,25 @@
     $: disabled = !input
 
     // Sum of value on every transaction
-    $: balance = transactions.reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
+    $: balance = $transactions.reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
 
-    $: income = transactions
+    $: income = $transactions
         .filter (transaction => transaction.value > 0)
         .reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
 
-    $: expenses = transactions
+    $: expenses = $transactions
         .filter (transaction => transaction.value < 0)
         .reduce ((accumulator, transaction) => accumulator + transaction.value, 0)
 
     // Showing the latest transaction first.
-    $: sortedTransactions = transactions.sort ((a, b) => b.date - a.date)
+    $: sortedTransactions = $transactions.sort ((a, b) => b.date - a.date)
     // ###############################################
     onMount (async () => {
         try {
             loading = true
             const { data } = await axios.get ("/api/transactions")
             // console.log ("data transaction", data)
-            transactions = data
+            $transactions = data
             loading = false
         }
         catch (err) {
@@ -57,7 +58,7 @@
         }
 
         const response = await axios.post ("/api/transactions", transaction)
-        transactions = [response.data, ...transactions]
+        $transactions = [response.data, ...transactions]
         input = 0
     }
 
@@ -65,7 +66,7 @@
         const response = await axios.delete ("/api/transactions/" + id)
 
         if (response.data.id === id) {
-            transactions = transactions.filter (t => t._id !== id)
+            $transactions = $transactions.filter (t => t._id !== id)
         }
     }
 </script>
@@ -96,11 +97,12 @@
             </button>
         </p>
     </div>
+
     {#if loading}
     <Loading />
     {/if}
 
-    {#if transactions.length > 0}
+    {#if $transactions.length > 0}
         <!-- Balance columns -->
         <SummaryCard mode="balance" value={balance}/>
 
@@ -114,7 +116,7 @@
             </div>
         </div>
         <hr>
-    {:else}
+    {:else if !loading}
         <div class="notification">
             add Your first transaction
         </div>
