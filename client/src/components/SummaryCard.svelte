@@ -7,10 +7,10 @@
     export let mode = "balance"
 
     // ## Reactive statement
-    $: label = mode.toUpperCase ()
-    $: cssClass = getCssCLass (mode)
+    $: label = mode.toUpperCase()
+    $: cssClass = getCssCLass(mode)
 
-    function getCssCLass (mode) {
+    function getCssCLass(mode) {
         switch (mode) {
             case 'balance':
                 return "is-info"

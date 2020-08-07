@@ -27,30 +27,30 @@
     onMount (async () => {
         try {
             loading = true
-            const { data } = await axios.get ("/api/transactions")
-            // console.log ("data transaction", data)
+            const { data } = await axios.get("/api/transactions")
+            // console.log("data transaction", data)
             $transactions = data
             loading = false
         }
         catch (err) {
             loading = false
-            console.log ("onMount error: ", err)
+            console.log("onMount error: ", err)
         }
     })
 
-    async function addTransaction () {
+    async function addTransaction() {
         const transaction = {
-            date    : new Date ().getTime (),
+            date    : new Date().getTime(),
             value   : typeOfTransaction === "+" ? input : input * - 1
         }
 
-        const response = await axios.post ("/api/transactions", transaction)
+        const response = await axios.post("/api/transactions", transaction)
         $transactions = [response.data, ...$transactions]
         input = 0
     }
 
     async function removeTransaction (id) {
-        const response = await axios.delete ("/api/transactions/" + id)
+        const response = await axios.delete("/api/transactions/" + id)
 
         if (response.data.id === id) {
             $transactions = $transactions.filter (t => t._id !== id)
